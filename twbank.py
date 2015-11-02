@@ -1,25 +1,46 @@
 #!/usr/bin/env python
 
-import csv
 import logging
 import json
+import re
 
+from bs4 import BeautifulSoup
 from helper import fetch_url
 
+currency_table = {
+    u'\xa0Australian Dollar (AUD)':  'AUD',
+    u'\xa0Canadian Dollar (CAD)':    'CAD',
+    u'\xa0Swiss Franc (CHF)':        'CHF',
+    u'\xa0China Yen (CNY)':          'CNY',
+    u'\xa0Euro (EUR)':               'EUR',
+    u'\xa0British Pound (GBP)':      'GBP',
+    u'\xa0Hong Kong Dollar (HKD)':   'HKD',
+    u'\xa0Indonesian Rupiah (IDR)':  'IDR',
+    u'\xa0Japanese Yen (JPY)':       'JPY',
+    u'\xa0Korean Won (KRW)':         'KRW',
+    u'\xa0Malaysian Ringgit (MYR)':  'MYR',
+    u'\xa0New Zealand Dollar (NZD)': 'NZD',
+    u'\xa0Philippine Peso (PHP)':    'PHP',
+    u'\xa0Swedish Krona (SEK)':      'SEK',
+    u'\xa0Singapore Dollar (SGD)':   'SGD',
+    u'\xa0Thai Baht (THB)':          'THB',
+    u'\xa0American Dollar (USD)':    'USD',
+    u'\xa0Vietnam Dong (VND)':       'VND',
+    u'\xa0South African Rand (ZAR)': 'ZAR',
+}
+
 data = {}
-#content = fetch_url("http://rate.bot.com.tw/Pages/UIP003/Download.ashx?lang=en-US&fileType=1&date=2015-11-02T11:00:52")
-content = fetch_url("http://rate.bot.com.tw/Pages/UIP003/Download.ashx?lang=en-US&fileType=1")
+content = fetch_url("http://rate.bot.com.tw/Pages/Static/UIP003.en-US.htm")
+soup = BeautifulSoup(content, "lxml")
+tables = soup.find_all('table')
 
-fields = ['Currency', 'Rate', 'Cash', 'Spot', 'Forward-10Days',
-          'Forward-30Days', 'Forward-60Days', 'Forward-90Days', 'Forward-120Days', 'Forward-150Days',
-          'Forward-180Days' 'Rate', 'Cash' 'Spot', 'Forward-10Days',
-          'Forward-30Days', 'Forward-60Days', 'Forward-90Days', 'Forward-120Days', 'Forward-150Days',
-          'Forward-180Days']
+#print re.findall(ur'Quoted Date[\uff1a](.*)', tables[4].find_all('td')[:][-1].text)
 
-table = {}
-for l in content.split('\r\n')[1:]:
-    if not l.strip(): continue
-    columns = [x.strip() for x in l.strip().split(',')]
-    table[columns[0]] = [float(x) for x in columns[2:4] + columns[12:14]]
+# extract currency exchange data from sixth table
+for tr in tables[6].find_all('tr'):
+    tds = [td.text for td in tr.find_all('td')]
+    if not tds:
+        continue
+    data[currency_table[tds[0]]] = [float(x) if x != '-' else None for x in tds[1:5]]
 
-print json.dumps(table)
+#print json.dumps(data)
