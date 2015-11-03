@@ -1,3 +1,7 @@
+import calendar
+import datetime
+import time
+
 USE_GAE = False
 
 def fetch_url(url):
@@ -20,5 +24,42 @@ def fetch_url(url):
                                   deadline=DEADLINE)
     #logging.warning("eof fetching....")
     return response.content
+
+class GenericBank(object):
+
+    supported_currencies = \
+        ['AUD', 'CAD', 'CHF', 'CNY', 'EUR',
+         'GBP', 'HKD', 'IDR', 'JPY', 'KRW',
+         'MYR', 'NZD', 'PHP', 'SEK', 'SGD',
+         'THB', 'USD', 'VND', 'ZAR']
+
+    @staticmethod
+    def _get_epoch():
+        return calendar.timegm(time.gmtime())
+
+    @staticmethod
+    def dump_data(data):
+        """
+        """
+        print "Quote date:", datetime.datetime.utcfromtimestamp(data['date']).strftime('%Y-%m-%dT%H:%M:%SZ')
+        print "Currency Cash_buy Cash_sell Spot_buy Spot_sell %015 %015s" % ('Currency', 'Cash buy', 'Cash sell', 'Spot buy', 'Spot sell')
+        for cur, rates in data['data'].iteritems():
+            print cur, rates
+
+    def query_rate(self):
+        """
+        Returns current quoted currency exchange data in format
+        {
+          "date": epoch time (type: int)
+          "data": {
+              "currency 1": [cash buy, cash sell, spot buy, spot sell],
+              "currency 2": [cash buy, cash sell, spot buy, spot sell],
+              ...
+          }
+          where
+           - "currency 1" is listed in GenericBank.supported_currencies (type: string)
+           - exchange rates in float
+        """
+        pass
 
 

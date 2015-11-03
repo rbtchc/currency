@@ -8,6 +8,7 @@ import time
 
 from bs4 import BeautifulSoup
 from helper import fetch_url
+from helper import GenericBank
 
 currency_table = {
     u'\xa0Australian Dollar (AUD)':  'AUD',
@@ -50,4 +51,5 @@ for tr in tables[6].find_all('tr'):
     data[currency_table[tds[0]]] = [float(x) if x != '-' else None for x in tds[1:5]]
 data = {"date": quote_date, "data": data}
 
+GenericBank.dump_data(data)
 print json.dumps(data)
