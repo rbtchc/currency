@@ -52,4 +52,3 @@ for tr in tables[6].find_all('tr'):
 data = {"date": quote_date, "data": data}
 
 GenericBank.dump_data(data)
-print json.dumps(data)

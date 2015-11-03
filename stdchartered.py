@@ -5,6 +5,7 @@ import json
 
 from bs4 import BeautifulSoup
 from helper import fetch_url
+from helper import GenericBank
 
 currency_table = {
     u'\u6fb3\u5e63\uff08AUD\uff09':             'AUD',
@@ -30,5 +31,7 @@ for tr in soup.table.find_all(['tr'])[1:]:
     key = currency_table.get(tr.th.getText(), None)
     value = [None if x.getText() == '-' else float(x.getText()) for x in tr.find_all(['td'])]
     data[key] = value
+data = {'data': data}
+data['date'] = GenericBank._get_epoch()
 
-print json.dumps(data)
+GenericBank.dump_data(data)

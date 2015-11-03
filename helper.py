@@ -40,11 +40,16 @@ class GenericBank(object):
     @staticmethod
     def dump_data(data):
         """
+        Dump currency data
         """
-        print "Quote date:", datetime.datetime.utcfromtimestamp(data['date']).strftime('%Y-%m-%dT%H:%M:%SZ')
-        print "Currency Cash_buy Cash_sell Spot_buy Spot_sell %015 %015s" % ('Currency', 'Cash buy', 'Cash sell', 'Spot buy', 'Spot sell')
+        if 'date' in data:
+            print "Quote date:", datetime.datetime.utcfromtimestamp(data['date']).strftime('%Y-%m-%dT%H:%M:%SZ')
+        print "Currency Cash_buy Cash_sell Spot_buy Spot_sell"
+        print '-' * 48
         for cur, rates in data['data'].iteritems():
-            print cur, rates
+            print '%-08s %-08s %-09s %-08s %-09s' % (cur,
+                    rates[0] if rates[0] else '-', rates[1] if rates[1] else '-',
+                    rates[2] if rates[2] else '-', rates[3] if rates[3] else '-')
 
     def query_rate(self):
         """
