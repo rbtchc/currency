@@ -10,7 +10,7 @@ currency_table = {
     u'\u6fb3\u5e63\uff08AUD\uff09':             'AUD',
     u'\u52a0\u62ff\u5927\u5e63\uff08CAD\uff09': 'CAD',
     u'\u745e\u58eb\u6cd5\u90ce\uff08CHF\uff09': 'CHF',
-    u'\u4eba\u6c11\u5e63\uff08CNY\uff09':       'CNY'
+    u'\u4eba\u6c11\u5e63\uff08CNY\uff09':       'CNY',
     u'\u6b50\u5143\uff08EUR\uff09':             'EUR',
     u'\u82f1\u938a\uff08GBP\uff09':             'GBP',
     u'\u65e5\u5713\uff08JPY\uff09':             'JPY',
