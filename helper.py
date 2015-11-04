@@ -28,10 +28,27 @@ def fetch_url(url):
 class GenericBank(object):
 
     supported_currencies = \
-        ['AUD', 'CAD', 'CHF', 'CNY', 'EUR',
-         'GBP', 'HKD', 'IDR', 'JPY', 'KRW',
-         'MYR', 'NZD', 'PHP', 'SEK', 'SGD',
-         'THB', 'USD', 'VND', 'ZAR']
+        {
+            'AUD': 'Australian Dollar',
+            'CAD': 'Canadian Dollar',
+            'CHF': 'Swiss Franc',
+            'CNY': 'Chinese Yuan',
+            'EUR': 'Euro',
+            'GBP': 'British Pound',
+            'HKD': 'Hong Kong Dolloar',
+            'IDR': 'Indonesian Rupiah',
+            'JPY': 'Japanese Yen',
+            'KRW': 'South Korean Won',
+            'MYR': 'Malaysian Ringgit',
+            'NZD': 'New Zealand Dollar',
+            'PHP': 'Philippine Peso',
+            'SEK': 'Swedish Krona',
+            'SGD': 'Singapore Dollar',
+            'THB': 'Thai Baht',
+            'USD': 'US Dollar',
+            'VND': 'Vietnamese Dong',
+            'ZAR': 'South African Rand'
+        }
 
     @staticmethod
     def _get_epoch():
