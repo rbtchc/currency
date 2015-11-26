@@ -37,7 +37,9 @@ class TWBank(GenericBank):
             u'\xa0South African Rand (ZAR)': 'ZAR',
         }
 
-    def query_rate(self):
+        self.bank_name = "Bank of Taiwan"
+
+    def quote_rate(self):
         content = fetch_url("http://rate.bot.com.tw/Pages/Static/UIP003.en-US.htm")
         soup = BeautifulSoup(content, "lxml")
         tables = soup.find_all('table')
@@ -46,7 +48,7 @@ class TWBank(GenericBank):
         if not quote_date_str:
             logging.error("Unable to parse quoted date from html!")
         # Hardcoded as GMT+8 (CST)
-        quote_date = calendar.timegm(time.strptime(quote_date_str[0]+' CST', "%m/%d/%Y %H:%M %Z"))
+        quote_date = calendar.timegm(time.strptime(quote_date_str[0]+' CST', "%m/%d/%Y %H:%M CST"))
 
         data = {}
         # extract currency exchange data from sixth table
@@ -59,6 +61,6 @@ class TWBank(GenericBank):
 
 if __name__ == '__main__':
     bank = TWBank()
-    data = bank.query_rate()
+    data = bank.quote_rate()
+    print bank.quote_bank()
     bank.dump_data(data)
-

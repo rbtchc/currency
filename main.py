@@ -1,7 +1,16 @@
+import sys
+sys.path.insert(0, 'libs')
+
+import datetime
+import webapp2
+
 from google.appengine.api import datastore_types
 from google.appengine.ext import ndb
-import webapp2
+from models import XchgRecord
+from helper import GenericBank
+from twbank import TWBank
 from webapp2_extras import jinja2
+
 
 class BaseHandler(webapp2.RequestHandler):
 
@@ -22,6 +31,19 @@ class MainHandler(BaseHandler):
 
     def get(self):
         self.render_response('main.html')
+
+        data = TWBank().quote_rate()
+        quote_date = datetime.datetime.fromtimestamp(data['date']) if 'date' in data else None
+        for c, r in data['data'].iteritems():
+            rec = XchgRecord()
+            rec.base_currency = c
+            rec.to_currency = 'TWD'
+            rec.cash_buy =  r[0]
+            rec.cash_sell = r[1]
+            rec.spot_buy =  r[2]
+            rec.spot_sell = r[3]
+            if quote_date: rec.quote_date = quote_date
+            rec.put()
 
 APPLICATION = webapp2.WSGIApplication([
         ('/', MainHandler),

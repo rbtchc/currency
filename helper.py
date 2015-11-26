@@ -45,13 +45,15 @@ class GenericBank(object):
             'SEK': 'Swedish Krona',
             'SGD': 'Singapore Dollar',
             'THB': 'Thai Baht',
+            'TWD': 'Taiwan New Dollar',
             'USD': 'US Dollar',
             'VND': 'Vietnamese Dong',
             'ZAR': 'South African Rand'
         }
+    bank_name = None
 
     @staticmethod
-    def _get_epoch():
+    def get_epoch():
         return calendar.timegm(time.gmtime())
 
     @staticmethod
@@ -68,7 +70,7 @@ class GenericBank(object):
                     rates[0] if rates[0] else '-', rates[1] if rates[1] else '-',
                     rates[2] if rates[2] else '-', rates[3] if rates[3] else '-')
 
-    def query_rate(self):
+    def quote_rate(self):
         """
         Returns current quoted currency exchange data in format
         {
@@ -82,6 +84,11 @@ class GenericBank(object):
            - "currency 1" is listed in GenericBank.supported_currencies (type: string)
            - exchange rates in float
         """
-        pass
+        raise
 
+    def quote_bank(self):
+        """
+        Return name of the bank which gives the quote
+        """
+        return self.bank_name
 

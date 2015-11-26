@@ -37,7 +37,7 @@ class STDCharteredBank(GenericBank):
             value = [None if x.getText() == '-' else float(x.getText()) for x in tr.find_all(['td'])]
             data[key] = value
         data = {'data': data}
-        data['date'] = GenericBank._get_epoch()
+        data['date'] = GenericBank.get_epoch()
         return data
 
 if __name__ == '__main__':
