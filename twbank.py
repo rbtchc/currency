@@ -39,7 +39,7 @@ class TWBank(GenericBank):
 
         self.bank_name = "Bank of Taiwan"
 
-    def quote_rate(self):
+    def quote(self):
         content = fetch_url("http://rate.bot.com.tw/Pages/Static/UIP003.en-US.htm")
         soup = BeautifulSoup(content, "lxml")
         tables = soup.find_all('table')

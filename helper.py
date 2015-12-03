@@ -70,7 +70,7 @@ class GenericBank(object):
                     rates[0] if rates[0] else '-', rates[1] if rates[1] else '-',
                     rates[2] if rates[2] else '-', rates[3] if rates[3] else '-')
 
-    def quote_rate(self):
+    def quote(self):
         """
         Returns current quoted currency exchange data in format
         {
@@ -86,7 +86,7 @@ class GenericBank(object):
         """
         raise
 
-    def quote_bank(self):
+    def name(self):
         """
         Return name of the bank which gives the quote
         """
