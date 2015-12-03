@@ -27,8 +27,9 @@ class STDCharteredBank(GenericBank):
             u'\u7f8e\u5143\uff08USD\uff09':             'USD',
             u'\u5357\u975e\u5e63\uff08ZAR\uff09':       'ZAR',
         }
+        self.bank_name = 'Standard Chartered Bank'
 
-    def query_rate(self):
+    def quote(self):
         data = {}
         content = fetch_url("http://www.standardchartered.com.tw/check/inquiry-rate-foreign-exchange.asp")
         soup = BeautifulSoup(content, "lxml")
@@ -42,6 +43,6 @@ class STDCharteredBank(GenericBank):
 
 if __name__ == '__main__':
     bank = STDCharteredBank()
-    data = bank.query_rate()
+    data = bank.quote()
     bank.dump_data(data)
 
