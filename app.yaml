@@ -9,7 +9,6 @@ handlers:
   script: main.app
 - url: /rate.*
   script: main.app
-  login: admin
 - url: /tasks/.*
   script: main.app
   login: admin
