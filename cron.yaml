@@ -2,4 +2,3 @@ cron:
 - description: perioidic retrieving quote from bank of taiwan 
   url: /tasks/quote/v1.0/BOT
   schedule: every 5 mins 
-
