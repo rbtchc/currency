@@ -28,19 +28,37 @@ class LandingPage(Resource):
 api.add_resource(LandingPage, '/')
 
 class Rate(Resource):
+    '''
+    '''
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('start_date', type=str, required=True)
+        self.parser.add_argument('end_date',   type=str, required=True)
+        self.parser.add_argument('currency',   type=str, required=True)
+
+        super(Rate, self).__init__()
+
 
     def get(self, bank_id):
+
+        args = self.parser.parse_args(strict=True)
+
         bank = banks.get_bank(bank_id)
         if not bank:
-            abort(404,
-                  message="Not found. Supported banks = %s"
-                          % ','.join(banks.get_bank_ids()))
+            abort(404, message="Not found. Supported banks = %s" % ','.join(banks.get_bank_ids()))
+        try:
+            start_date = datetime.datetime.strptime(args['start_date'], '%Y%m%d')
+            # until the end of the day
+            end_date = datetime.datetime.strptime(args['end_date'], '%Y%m%d') + datetime.timedelta(days=1)
+        except:
+            abort(400, message="Unable to parse start/end date")
 
         ancestor_key = ndb.Key('Bank', bank.name())
-        data = {}
-        for x in XchgRecord.get_latest_quotes(ancestor_key).fetch(19):
-            logging.info(x)
-            data[x.base_currency] = [x.cash_buy, x.cash_sell, x.spot_buy, x.spot_sell]
+        data = {'quotes':[]}
+        for x in XchgRecord.get_latest_quotes(ancestor_key).filter(XchgRecord.base_currency == args['currency'])\
+                .filter(XchgRecord.quote_date <= end_date).filter(XchgRecord.quote_date >= start_date).fetch():
+            data['quotes'].append([x.quote_date.strftime('%Y-%m-%d_%H:%M:%S'),
+                x.cash_buy, x.cash_sell, x.spot_buy, x.spot_sell])
         return jsonify(data)
 api.add_resource(Rate, '/rate/v1.0/<string:bank_id>')
 
