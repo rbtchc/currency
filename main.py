@@ -12,6 +12,7 @@ from webapp2_extras import jinja2
 
 # Import the Flask Framework
 from flask import Flask, request, jsonify
+from flask import render_template
 from flask_restful import abort, reqparse
 from flask_restful import Resource, Api
 
@@ -22,10 +23,9 @@ app.config["ERROR_404_HELP"] = False
 # the App Engine WSGI application server.
 api = Api(app)
 
-class LandingPage(Resource):
-    def get(self):
-        return {'hi': 'there'}
-api.add_resource(LandingPage, '/')
+@app.route('/')
+def landing_page():
+    return render_template('main.html')
 
 class Rate(Resource):
     '''
@@ -57,8 +57,8 @@ class Rate(Resource):
         data = {'quotes':[]}
         for x in XchgRecord.get_latest_quotes(ancestor_key).filter(XchgRecord.base_currency == args['currency'])\
                 .filter(XchgRecord.quote_date <= end_date).filter(XchgRecord.quote_date >= start_date).fetch():
-            data['quotes'].append([x.quote_date.strftime('%Y-%m-%d_%H:%M:%S'),
-                x.cash_buy, x.cash_sell, x.spot_buy, x.spot_sell])
+            data['quotes'].append([x.quote_date.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            x.cash_buy, x.cash_sell, x.spot_buy, x.spot_sell])
         return jsonify(data)
 api.add_resource(Rate, '/rate/v1.0/<string:bank_id>')
 

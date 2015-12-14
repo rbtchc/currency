@@ -1,1 +1,66 @@
-<p>Hi there!</p>
+<html>
+<head>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript">
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+<script type="text/javascript">
+    google.load('visualization', '1.1', {packages: ['line']});
+    //google.setOnLoadCallback(drawChart);
+
+    function drawChart(d) {
+        var data = new google.visualization.DataTable();
+        data.addColumn('datetime',  'Time');
+        data.addColumn('number',    'Cash buy');
+        data.addColumn('number',    'Cash sell');
+        data.addColumn('number',    'Spot sell');
+        data.addColumn('number',    'Spot buy');
+        for(var i in d.quotes) {
+            data.addRow([new Date(d.quotes[i][0]), d.quotes[i][1], d.quotes[i][2],
+                    d.quotes[i][3], d.quotes[i][4]]);
+        }
+
+        var options = {
+            chart: {
+                title: 'USD/TWD exchange rate',
+                //subtitle: 'in millions of dollars (USD)'
+            },
+            width: 900,
+            height: 500
+        };
+        var chart = new google.charts.Line(document.getElementById('linechart_material'));
+        chart.draw(data, options);
+    }
+</script>
+
+<script type="text/javascript">
+    $(function() {
+        $('a#calculate').bind('click', function() {
+            $.getJSON($SCRIPT_ROOT + '/rate/v1.0/BOT', {
+                currency:   $('input[name="currency"]').val(),
+                start_date: $('input[name="start_date"]').val(),
+                end_date:   $('input[name="end_date"]').val()
+            }, function(data) {
+                drawChart(data);
+            });
+            return false;
+        });
+    });
+</script>
+
+</head>
+<body>
+<h1>Get quoting</h1>
+<p>
+Currency:   <input type="text" size=5 name="currency"   value="USD">
+Start Date: <input type="text" size=5 name="start_date" value="20151214">
+End Date:   <input type="text" size=5 name="end_date"   value="20151214">
+<p>
+<a href="#" id="calculate">Get quote</a>
+<div id="linechart_material"></div>
+
+</body>
+</html>
