@@ -61,6 +61,6 @@ class TWBank(GenericBank):
 
 if __name__ == '__main__':
     bank = TWBank()
-    data = bank.quote_rate()
-    print bank.quote_bank()
+    data = bank.quote()
+    print bank.name()
     bank.dump_data(data)

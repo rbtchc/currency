@@ -57,6 +57,7 @@ class Rate(Resource):
         data = {'quotes':[]}
         for x in XchgRecord.get_latest_quotes(ancestor_key).filter(XchgRecord.base_currency == args['currency'])\
                 .filter(XchgRecord.quote_date <= end_date).filter(XchgRecord.quote_date >= start_date).fetch():
+            x.quote_date -= datetime.timedelta(hours=8) # FIXME: ndb records are stored as GMT +8
             data['quotes'].append([x.quote_date.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
             x.cash_buy, x.cash_sell, x.spot_buy, x.spot_sell])
         return jsonify(data)

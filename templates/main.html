@@ -5,7 +5,9 @@
 <script type="text/javascript">
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="//www.google.com/jsapi"></script>
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
 <script type="text/javascript">
     google.load("visualization", "1.1", {packages:["corechart"]});
@@ -18,15 +20,11 @@
         data.addColumn('number',    'Spot sell');
         data.addColumn('number',    'Spot buy');
         for(var i in d.quotes) {
-            data.addRow([new Date(d.quotes[i][0]), d.quotes[i][1], d.quotes[i][2],
+            data.addRow([new Date(new Date(d.quotes[i][0])), d.quotes[i][1], d.quotes[i][2],
                     d.quotes[i][3], d.quotes[i][4]]);
         }
 
         var options = {
-            chart: {
-                title: 'USD/TWD exchange rate',
-                //subtitle: 'in millions of dollars (USD)'
-            },
             width: 900,
             height: 500,
             pointSize: 5,
@@ -39,28 +37,57 @@
 
 <script type="text/javascript">
     $(function() {
-        $('a#calculate').bind('click', function() {
+        $("#start_date").datepicker();
+        $("#end_date").datepicker();
+
+        $("#start_date").datepicker("option", "dateFormat", "yymmdd");
+        $("#end_date").datepicker("option", "dateFormat", "yymmdd");
+
+        $('a#get_quote').bind('click', function() {
+
             $.getJSON($SCRIPT_ROOT + '/rate/v1.0/BOT', {
-                currency:   $('input[name="currency"]').val(),
-                start_date: $('input[name="start_date"]').val(),
-                end_date:   $('input[name="end_date"]').val()
+                currency:   $( "#currency" ).val(),
+                start_date: $( "#start_date" ).val(),
+                end_date:   $( "#end_date" ).val()
             }, function(data) {
                 drawChart(data);
             });
             return false;
         });
-    });
+        });
 </script>
 
 </head>
 <body>
-<h1>Get quoting</h1>
+<div>
 <p>
-Currency:   <input type="text" size=5 name="currency"   value="USD">
-Start Date: <input type="text" size=5 name="start_date" value="20151214">
-End Date:   <input type="text" size=5 name="end_date"   value="20151214">
+Currency:
+<select id="currency">
+    <option>EUR</option>
+    <option selected="selected">USD</option>
+    <option>AUD</option>
+    <option>CHF</option>
+    <option>SEK</option>
+    <option>MYR</option>
+    <option>KRW</option>
+    <option>THB</option>
+    <option>JPY</option>
+    <option>VND</option>
+    <option>GBP</option>
+    <option>NZD</option>
+    <option>CNY</option>
+    <option>PHP</option>
+    <option>ZAR</option>
+    <option>SGD</option>
+    <option>HKD</option>
+    <option>CAD</option>
+</select>
+Start Date: <input type="text" size="10" id="start_date" value="12/14/2015">
+End Date:   <input type="text" size="10" id="end_date"   value="12/14/2015">
+<a href="#" id="get_quote">Get quote</a>
 <p>
-<a href="#" id="calculate">Get quote</a>
+</div>
+
 <div id="linechart_material"></div>
 
 </body>
