@@ -8,8 +8,7 @@
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
 <script type="text/javascript">
-    google.load('visualization', '1.1', {packages: ['line']});
-    //google.setOnLoadCallback(drawChart);
+    google.load("visualization", "1.1", {packages:["corechart"]});
 
     function drawChart(d) {
         var data = new google.visualization.DataTable();
@@ -29,9 +28,11 @@
                 //subtitle: 'in millions of dollars (USD)'
             },
             width: 900,
-            height: 500
+            height: 500,
+            pointSize: 5,
+            pointShape: { type: 'oval', sides: 4 }
         };
-        var chart = new google.charts.Line(document.getElementById('linechart_material'));
+        var chart = new google.visualization.LineChart(document.getElementById('linechart_material'));
         chart.draw(data, options);
     }
 </script>
