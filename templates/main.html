@@ -17,8 +17,8 @@
         data.addColumn('datetime',  'Time');
         data.addColumn('number',    'Cash buy');
         data.addColumn('number',    'Cash sell');
-        data.addColumn('number',    'Spot sell');
         data.addColumn('number',    'Spot buy');
+        data.addColumn('number',    'Spot sell');
         for(var i in d.quotes) {
             data.addRow([new Date(new Date(d.quotes[i][0])), d.quotes[i][1], d.quotes[i][2],
                     d.quotes[i][3], d.quotes[i][4]]);
