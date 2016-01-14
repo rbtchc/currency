@@ -12,7 +12,7 @@
 <script type="text/javascript">
     google.load("visualization", "1.1", {packages:["corechart"]});
 
-    function drawChart(d) {
+    function drawChart(d, only_day) {
         var data = new google.visualization.DataTable();
         data.addColumn('datetime',  'Time');
         data.addColumn('number',    'Cash buy');
@@ -23,13 +23,16 @@
             data.addRow([new Date(new Date(d.quotes[i][0])), d.quotes[i][1], d.quotes[i][2],
                     d.quotes[i][3], d.quotes[i][4]]);
         }
-
         var options = {
             width: 900,
             height: 500,
             pointSize: 5,
             pointShape: { type: 'oval', sides: 4 }
         };
+        if (only_day) {
+            options['hAxis'] = { format:"MM/dd/yy" };
+        }
+
         var chart = new google.visualization.LineChart(document.getElementById('linechart_material'));
         chart.draw(data, options);
     }
@@ -51,7 +54,8 @@
                 start_date: $( "#start_date" ).val(),
                 end_date:   $( "#end_date" ).val()
             }, function(data) {
-                drawChart(data);
+                var only_day = $("#start_date").val() != $("#end_date").val()
+                drawChart(data, only_day);
             });
             return false;
         });

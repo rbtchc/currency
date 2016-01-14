@@ -60,11 +60,11 @@ class Rate(Resource):
         ancestor_key = ndb.Key('Bank', bank.name())
         data = {'quotes':[]}
         if (end_date - start_date) > datetime.timedelta(days=1):
+            # FIXME we need to generate a different table for this instead of query ndb day by day
             for sd in daterange(start_date, end_date):
                 ed = sd + datetime.timedelta(days=1)
                 x = XchgRecord.get_latest_quotes(ancestor_key).filter(XchgRecord.base_currency == args['currency'])\
                         .filter(XchgRecord.quote_date <= ed).filter(XchgRecord.quote_date >= sd).get()
-                logging.info('sd = %s, x = %s' % (sd, x))
                 if x:
                     x.quote_date -= datetime.timedelta(hours=8) # FIXME: ndb records are stored as GMT +8
                     data['quotes'].append([x.quote_date.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
@@ -74,7 +74,7 @@ class Rate(Resource):
                     .filter(XchgRecord.quote_date <= end_date).filter(XchgRecord.quote_date >= start_date).fetch():
                 x.quote_date -= datetime.timedelta(hours=8) # FIXME: ndb records are stored as GMT +8
                 data['quotes'].append([x.quote_date.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-                x.cash_buy, x.cash_sell, x.spot_buy, x.spot_sell])
+                    x.cash_buy, x.cash_sell, x.spot_buy, x.spot_sell])
         return jsonify(data)
 api.add_resource(Rate, '/rate/v1.0/<string:bank_id>')
 
