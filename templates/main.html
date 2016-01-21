@@ -69,7 +69,7 @@
 <div class="login-area">
     {% if user %}
     <script type="text/javascript">
-        document.write('{{ user }}'+'(<a class="login-link" href="{{url}}">logout</a>)');
+        document.write('{{ user.nickname }}'+'(<a class="login-link" href="{{url}}">logout</a>)');
     </script>
     {% else %}
     <a class="login-link" href="{{url}}">login</a>

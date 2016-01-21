@@ -24,4 +24,11 @@ class XchgRecord(ndb.Model):
     def get_latest_quotes(cls, ancestor_key):
         return cls.query(ancestor=ancestor_key).order(-cls.quote_date)
 
+class User(ndb.Model):
+  '''ndb model for saving user info and preferences'''
+  nickname = ndb.StringProperty(required = True)
+  email = ndb.StringProperty(required = True)
+  created = ndb.DateTimeProperty(auto_now_add = True)
+  isAdmin = ndb.BooleanProperty(required = True)
+
 

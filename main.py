@@ -7,7 +7,7 @@ from google.appengine.api import datastore_types
 from google.appengine.api import users
 from google.appengine.ext import ndb
 
-from models import XchgRecord
+from models import XchgRecord, User
 from helper import GenericBank
 from twbank import TWBank
 from webapp2_extras import jinja2
@@ -25,11 +25,34 @@ app.config["ERROR_404_HELP"] = False
 # the App Engine WSGI application server.
 api = Api(app)
 
+def create_user(user):
+    '''Create user and save to the database'''
+    u = User(id=user.user_id(),
+             nickname=user.nickname(),
+             email=user.email(),
+             isAdmin=users.is_current_user_admin())
+    u.put() #TODO memcache
+    return u
+
+def get_user(uid):
+    '''Get user record'''
+
+    key = ndb.Key('User', uid)
+    u = key.get()
+    return u
+
+
 @app.route('/')
 def landing_page():
+    url = users.create_login_url("/")
     u = users.get_current_user()
+    user_record = None
     logging.info("user = %s" % u)
-    return render_template('main.html', user=u)
+    if u:
+        user_record = get_user(u.user_id())
+        if not user_record:
+            user_record = create_user(u)
+    return render_template('main.html', user=user_record, url=url)
 
 def daterange(start_date, end_date):
     for n in range(int ((end_date - start_date).days)):
