@@ -15,10 +15,10 @@
     function drawChart(d, only_day) {
         var data = new google.visualization.DataTable();
         data.addColumn('datetime',  'Time');
-        data.addColumn('number',    'Cash buy');
-        data.addColumn('number',    'Cash sell');
-        data.addColumn('number',    'Spot buy');
-        data.addColumn('number',    'Spot sell');
+        data.addColumn('number',    '現金買入');
+        data.addColumn('number',    '現金賣出');
+        data.addColumn('number',    '即期買入');
+        data.addColumn('number',    '即期賣出');
         for(var i in d.quotes) {
             data.addRow([new Date(new Date(d.quotes[i][0])), d.quotes[i][1], d.quotes[i][2],
                     d.quotes[i][3], d.quotes[i][4]]);
