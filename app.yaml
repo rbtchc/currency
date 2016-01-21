@@ -12,6 +12,10 @@ handlers:
 - url: /tasks/.*
   script: main.app
   login: admin
+- url: /static/css
+  static_dir: static/css
+  expiration: "7d"
+
 
 libraries:
 - name: lxml

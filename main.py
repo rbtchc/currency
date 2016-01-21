@@ -4,7 +4,9 @@ import logging
 import webapp2
 
 from google.appengine.api import datastore_types
+from google.appengine.api import users
 from google.appengine.ext import ndb
+
 from models import XchgRecord
 from helper import GenericBank
 from twbank import TWBank
@@ -25,7 +27,9 @@ api = Api(app)
 
 @app.route('/')
 def landing_page():
-    return render_template('main.html')
+    u = users.get_current_user()
+    logging.info("user = %s" % u)
+    return render_template('main.html', user=u)
 
 def daterange(start_date, end_date):
     for n in range(int ((end_date - start_date).days)):

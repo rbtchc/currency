@@ -6,6 +6,7 @@
     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
 <script type="text/javascript" src="//www.google.com/jsapi"></script>
+<link rel="stylesheet" href="/static/css/style.css">
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
@@ -64,6 +65,17 @@
 
 </head>
 <body>
+
+<div class="login-area">
+    {% if user %}
+    <script type="text/javascript">
+        document.write('{{ user }}'+'(<a class="login-link" href="{{url}}">logout</a>)');
+    </script>
+    {% else %}
+    <a class="login-link" href="{{url}}">login</a>
+    {% endif %}
+</div>
+
 <div>
 <p>
 Currency:
