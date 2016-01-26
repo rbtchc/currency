@@ -34,7 +34,16 @@
             options['hAxis'] = { format:"MM/dd/yy" };
         }
 
-        var chart = new google.visualization.LineChart(document.getElementById('linechart_material'));
+        var chart_div = document.getElementById('linechart_material');
+        var chart = new google.visualization.LineChart(chart_div);
+
+        document.getElementById('png')
+
+        // Wait for the chart to finish drawing before calling the getImageURI() method.
+        google.visualization.events.addListener(chart, 'ready', function () {
+            document.getElementById('png').outerHTML = '<a href="' + chart.getImageURI() + '">printable version</a>';
+        });
+
         chart.draw(data, options);
     }
 </script>
@@ -60,7 +69,7 @@
             });
             return false;
         });
-        });
+    });
 </script>
 
 </head>
@@ -106,6 +115,7 @@ End Date:   <input type="text" size="10" id="end_date"   value="12/14/2015">
 </div>
 
 <div id="linechart_material"></div>
+<div id="png"></div>
 
 </body>
 </html>
