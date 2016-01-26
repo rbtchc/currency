@@ -25,6 +25,7 @@
                     d.quotes[i][3], d.quotes[i][4]]);
         }
         var options = {
+            title: $("#currency").val()+' versus TWD',
             width: 900,
             height: 500,
             pointSize: 5,
@@ -41,7 +42,7 @@
 
         // Wait for the chart to finish drawing before calling the getImageURI() method.
         google.visualization.events.addListener(chart, 'ready', function () {
-            document.getElementById('png').outerHTML = '<a href="' + chart.getImageURI() + '">printable version</a>';
+            document.getElementById('png').outerHTML = '<div id=\'png\'><a href="' + chart.getImageURI() + '">printable version</a></div>';
         });
 
         chart.draw(data, options);
