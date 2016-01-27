@@ -13,10 +13,7 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
-
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
     <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -35,6 +32,8 @@
     <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
 
+    <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
+    <script type="text/javascript" src="//www.google.com/jsapi"></script>
 </head>
 <body>
     <div class="login-area">
@@ -74,7 +73,42 @@
         <label><input type="checkbox" name="multiday" value="">Multi days</label>
         <input type="text" name="daterange" />
         <script type="text/javascript">
-            function getData(start, end, label) {
+            google.load("visualization", "1.1", {packages:["corechart"]});
+
+            function drawChart(d, only_day) {
+                var data = new google.visualization.DataTable();
+                data.addColumn('datetime',  'Time');
+                data.addColumn('number',    '現金買入');
+                data.addColumn('number',    '現金賣出');
+                data.addColumn('number',    '即期買入');
+                data.addColumn('number',    '即期賣出');
+                for(var i in d.quotes) {
+                    data.addRow([new Date(new Date(d.quotes[i][0])), d.quotes[i][1], d.quotes[i][2],
+                            d.quotes[i][3], d.quotes[i][4]]);
+                }
+                var options = {
+                    title: $("#currency").val()+' versus TWD',
+                    width: 900,
+                    height: 500,
+                    pointSize: 5,
+                    pointShape: { type: 'oval', sides: 4 }
+                };
+                if (only_day) {
+                    options['hAxis'] = { format:"MM/dd/yy" };
+                }
+
+                var chart_div = document.getElementById('linechart_material');
+                var chart = new google.visualization.LineChart(chart_div);
+
+                document.getElementById('png')
+
+                // Wait for the chart to finish drawing before calling the getImageURI() method.
+                google.visualization.events.addListener(chart, 'ready', function () {
+                    document.getElementById('png').outerHTML = '<div id=\'png\'><a href="' + chart.getImageURI() + '">printable version</a></div>';
+                });
+
+                chart.draw(data, options);
+            }            function getData(start, end, label) {
                 $.getJSON($SCRIPT_ROOT + '/rate/v1.0/BOT', {
                     currency:   $( "#currency" ).val(),
                     start_date: start.format("YYYYMMDD"),
@@ -85,6 +119,7 @@
                 });
                 return false;
             };
+
             $(function() {
                 var opts = {
                     "startDate": moment().startOf('day'),
@@ -108,74 +143,5 @@
         <div id="linechart_material"></div>
         <div id="png"></div>
     </div>
-
-    <script type="text/javascript">
-        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-    </script>
-    <script type="text/javascript" src="//www.google.com/jsapi"></script>
-
-    <script type="text/javascript">
-        google.load("visualization", "1.1", {packages:["corechart"]});
-
-        function drawChart(d, only_day) {
-            var data = new google.visualization.DataTable();
-            data.addColumn('datetime',  'Time');
-            data.addColumn('number',    '現金買入');
-            data.addColumn('number',    '現金賣出');
-            data.addColumn('number',    '即期買入');
-            data.addColumn('number',    '即期賣出');
-            for(var i in d.quotes) {
-                data.addRow([new Date(new Date(d.quotes[i][0])), d.quotes[i][1], d.quotes[i][2],
-                        d.quotes[i][3], d.quotes[i][4]]);
-            }
-            var options = {
-                title: $("#currency").val()+' versus TWD',
-                width: 900,
-                height: 500,
-                pointSize: 5,
-                pointShape: { type: 'oval', sides: 4 }
-            };
-            if (only_day) {
-                options['hAxis'] = { format:"MM/dd/yy" };
-            }
-
-            var chart_div = document.getElementById('linechart_material');
-            var chart = new google.visualization.LineChart(chart_div);
-
-            document.getElementById('png')
-
-            // Wait for the chart to finish drawing before calling the getImageURI() method.
-            google.visualization.events.addListener(chart, 'ready', function () {
-                document.getElementById('png').outerHTML = '<div id=\'png\'><a href="' + chart.getImageURI() + '">printable version</a></div>';
-            });
-
-            chart.draw(data, options);
-        }
-    </script>
-
-    <script type="text/javascript">
-        $(function() {
-            $("#start_date").datepicker();
-            $("#end_date").datepicker();
-            $("#start_date").datepicker("option", "dateFormat", "yymmdd");
-            $("#end_date").datepicker("option", "dateFormat", "yymmdd");
-            $("#start_date").datepicker("setDate", new Date());
-            $("#end_date").datepicker("setDate", new Date());
-
-            $('a#get_quote').bind('click', function() {
-
-                $.getJSON($SCRIPT_ROOT + '/rate/v1.0/BOT', {
-                    currency:   $( "#currency" ).val(),
-                    start_date: $( "#start_date" ).val(),
-                    end_date:   $( "#end_date" ).val()
-                }, function(data) {
-                    var only_day = $("#start_date").val() != $("#end_date").val()
-                    drawChart(data, only_day);
-                });
-                return false;
-            });
-        });
-    </script>
-
 </body>
 </html>
