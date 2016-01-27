@@ -48,7 +48,6 @@
     </div>
 
     <div>
-        <p>
         Currency:
         <select id="currency">
             <option>EUR</option>
@@ -70,17 +69,42 @@
             <option>HKD</option>
             <option>CAD</option>
         </select>
-        Start Date: <input type="text" size="10" id="start_date" value="12/14/2015">
-        End Date:   <input type="text" size="10" id="end_date"   value="12/14/2015">
-        <a href="#" id="get_quote">Get quote</a>
-        <input type="text" name="daterange" value="01/01/2015 - 01/31/2015" />
 
+        <!--a href="#" id="get_quote">Get quote</a-->
+        <label><input type="checkbox" name="multiday" value="">Multi days</label>
+        <input type="text" name="daterange" />
         <script type="text/javascript">
+            function getData(start, end, label) {
+                $.getJSON($SCRIPT_ROOT + '/rate/v1.0/BOT', {
+                    currency:   $( "#currency" ).val(),
+                    start_date: start.format("YYYYMMDD"),
+                    end_date:   end.format("YYYYMMDD"),
+                }, function(data) {
+                    var only_day = $("#start_date").val() != $("#end_date").val()
+                    drawChart(data, only_day);
+                });
+                return false;
+            };
             $(function() {
-                $('input[name="daterange"]').daterangepicker();
+                var opts = {
+                    "startDate": moment().startOf('day'),
+                    "singleDatePicker": true
+                };
+                $('input[name="multiday"]').change(function () {
+                    if (this.checked) {
+                        opts.singleDatePicker = false;
+                        opts.startDate = moment().subtract(1,'days').startOf('day');
+                        opts.endDate = moment().startOf('day');
+                    } else {
+                        opts.singleDatePicker = true;
+                        opts.startDate = moment().startOf('day');
+                    }
+                    $('input[name="daterange"]').daterangepicker(opts, getData);
+
+                });
+                $('input[name="daterange"]').daterangepicker(opts, getData);
             });
         </script>
-        <p>
         <div id="linechart_material"></div>
         <div id="png"></div>
     </div>
