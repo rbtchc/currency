@@ -45,103 +45,131 @@
         <a class="login-link" href="{{url}}">login</a>
         {% endif %}
     </div>
+    <div class="container">
+        <div class="row form-inline">
+            <label for="currency">Currency:</label>
+            <select class="form-control" id="currency">
+                <option>EUR</option>
+                <option selected="selected">USD</option>
+                <option>AUD</option>
+                <option>CHF</option>
+                <option>SEK</option>
+                <option>MYR</option>
+                <option>KRW</option>
+                <option>THB</option>
+                <option>JPY</option>
+                <option>VND</option>
+                <option>GBP</option>
+                <option>NZD</option>
+                <option>CNY</option>
+                <option>PHP</option>
+                <option>ZAR</option>
+                <option>SGD</option>
+                <option>HKD</option>
+                <option>CAD</option>
+            </select>
+        </div>
+        <div class="row checkbox">
+            <label><input type="checkbox" name="multiday" id="multiday" value="">Multi days</label>
+            <input type="text" name="daterange" id="daterange" />
+            <button type="button" class="btn btn-default" id="bt_quote">Quote!</button>
+            <script type="text/javascript">
+                google.load("visualization", "1.1", {packages:["corechart"]});
 
-    <div>
-        Currency:
-        <select id="currency">
-            <option>EUR</option>
-            <option selected="selected">USD</option>
-            <option>AUD</option>
-            <option>CHF</option>
-            <option>SEK</option>
-            <option>MYR</option>
-            <option>KRW</option>
-            <option>THB</option>
-            <option>JPY</option>
-            <option>VND</option>
-            <option>GBP</option>
-            <option>NZD</option>
-            <option>CNY</option>
-            <option>PHP</option>
-            <option>ZAR</option>
-            <option>SGD</option>
-            <option>HKD</option>
-            <option>CAD</option>
-        </select>
-
-        <!--a href="#" id="get_quote">Get quote</a-->
-        <label><input type="checkbox" name="multiday" value="">Multi days</label>
-        <input type="text" name="daterange" />
-        <script type="text/javascript">
-            google.load("visualization", "1.1", {packages:["corechart"]});
-
-            function drawChart(d, only_day) {
-                var data = new google.visualization.DataTable();
-                data.addColumn('datetime',  'Time');
-                data.addColumn('number',    '現金買入');
-                data.addColumn('number',    '現金賣出');
-                data.addColumn('number',    '即期買入');
-                data.addColumn('number',    '即期賣出');
-                for(var i in d.quotes) {
-                    data.addRow([new Date(new Date(d.quotes[i][0])), d.quotes[i][1], d.quotes[i][2],
-                            d.quotes[i][3], d.quotes[i][4]]);
-                }
-                var options = {
-                    title: $("#currency").val()+' versus TWD',
-                    width: 900,
-                    height: 500,
-                    pointSize: 5,
-                    pointShape: { type: 'oval', sides: 4 }
+                Date.prototype.yyyymmdd = function() {
+                    var yyyy = this.getFullYear().toString();
+                    var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+                    var dd  = this.getDate().toString();
+                    return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]); // padding
                 };
-                if (only_day) {
-                    options['hAxis'] = { format:"MM/dd/yy" };
-                }
 
-                var chart_div = document.getElementById('linechart_material');
-                var chart = new google.visualization.LineChart(chart_div);
-
-                document.getElementById('png')
-
-                // Wait for the chart to finish drawing before calling the getImageURI() method.
-                google.visualization.events.addListener(chart, 'ready', function () {
-                    document.getElementById('png').outerHTML = '<div id=\'png\'><a href="' + chart.getImageURI() + '">printable version</a></div>';
-                });
-
-                chart.draw(data, options);
-            }            function getData(start, end, label) {
-                $.getJSON($SCRIPT_ROOT + '/rate/v1.0/BOT', {
-                    currency:   $( "#currency" ).val(),
-                    start_date: start.format("YYYYMMDD"),
-                    end_date:   end.format("YYYYMMDD"),
-                }, function(data) {
-                    var only_day = $("#start_date").val() != $("#end_date").val()
-                    drawChart(data, only_day);
-                });
-                return false;
-            };
-
-            $(function() {
-                var opts = {
-                    "startDate": moment().startOf('day'),
-                    "singleDatePicker": true
-                };
-                $('input[name="multiday"]').change(function () {
-                    if (this.checked) {
-                        opts.singleDatePicker = false;
-                        opts.startDate = moment().subtract(1,'days').startOf('day');
-                        opts.endDate = moment().startOf('day');
-                    } else {
-                        opts.singleDatePicker = true;
-                        opts.startDate = moment().startOf('day');
+                function drawChart(d, only_day) {
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('datetime',  'Time');
+                    data.addColumn('number',    '現金買入');
+                    data.addColumn('number',    '現金賣出');
+                    data.addColumn('number',    '即期買入');
+                    data.addColumn('number',    '即期賣出');
+                    for(var i in d.quotes) {
+                        data.addRow([new Date(new Date(d.quotes[i][0])), d.quotes[i][1], d.quotes[i][2],
+                                d.quotes[i][3], d.quotes[i][4]]);
                     }
-                    $('input[name="daterange"]').daterangepicker(opts, getData);
+                    var options = {
+                        title: $("#currency").val()+' versus TWD',
+                        width: 900,
+                        height: 500,
+                        pointSize: 5,
+                        pointShape: { type: 'oval', sides: 4 }
+                    };
+                    if (only_day) {
+                        options['hAxis'] = { format:"MM/dd/yy" };
+                    }
 
+                    var chart_div = document.getElementById('linechart_material');
+                    var chart = new google.visualization.LineChart(chart_div);
+
+                    document.getElementById('png')
+
+                    // Wait for the chart to finish drawing before calling the getImageURI() method.
+                    google.visualization.events.addListener(chart, 'ready', function () {
+                        document.getElementById('png').outerHTML =
+                            '<div class=\'row\' id=\'png\'><a href="'
+                            + chart.getImageURI()
+                            + '">printable version</a></div>';
+                    });
+                    chart.draw(data, options);
+                };
+
+                function getData(start, end, label) {
+                    //console.log("start - end: " + start + ' - ' + end);
+                    $.getJSON($SCRIPT_ROOT + '/rate/v1.0/BOT', {
+                        currency:   $( "#currency" ).val(),
+                        start_date: start.format("YYYYMMDD"),
+                        end_date:   end.format("YYYYMMDD"),
+                    }, function(data) {
+                        var only_day = $("#start_date").val() != $("#end_date").val()
+                        drawChart(data, only_day);
+                    });
+                    return false;
+                };
+
+                $("#bt_quote").click(function() {
+                    multi = $("#multiday").is(":checked");
+                    dates = $("#daterange").val().match(/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/g);
+                    start_date = moment(Date.parse(dates[0]));
+                    if (multi == false) {
+                        getData(start_date, start_date, null);
+                    } else {
+                        end_date = moment(Date.parse(dates[1]));
+                        getData(start_date, end_date, null);
+                    }
                 });
-                $('input[name="daterange"]').daterangepicker(opts, getData);
-            });
-        </script>
-        <div id="linechart_material"></div>
-        <div id="png"></div>
+
+                $(function() {
+                    var opts = {
+                        "startDate": moment().startOf('day'),
+                        "singleDatePicker": true
+                    };
+                    $('input[name="multiday"]').change(function () {
+                        if (this.checked) {
+                            opts.singleDatePicker = false;
+                            opts.startDate = moment().subtract(1,'days').startOf('day');
+                            opts.endDate = moment().startOf('day');
+                        } else {
+                            opts.singleDatePicker = true;
+                            opts.startDate = moment().startOf('day');
+                        }
+                        $('input[name="daterange"]').daterangepicker(opts, getData);
+
+                    });
+                    $('input[name="daterange"]').daterangepicker(opts, getData);
+                });
+            </script>
+        </div>
+        <div class="row">
+            <div id="linechart_material"></div>
+            <div id="png"></div>
+        </div>
     </div>
 </body>
 </html>
