@@ -106,7 +106,7 @@
 
                     // Wait for the chart to finish drawing before calling the getImageURI() method.
                     google.visualization.events.addListener(chart, 'ready', function () {
-                        $('#png').innerHTML = '<a href="'+chart.getImageURI()+'">printable version</a>';
+                        document.getElementById('png').innerHTML = '<a href="'+chart.getImageURI()+'">printable version</a>';
                     });
                     chart.draw(data, options);
                 };
