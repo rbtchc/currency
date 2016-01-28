@@ -91,7 +91,7 @@
                     }
                     var options = {
                         title: $("#currency").val()+' versus TWD',
-                        width: 900,
+                        width: $(window).width(),
                         height: 500,
                         pointSize: 5,
                         pointShape: { type: 'oval', sides: 4 }
@@ -100,15 +100,12 @@
                         options['hAxis'] = { format:"MM/dd/yy" };
                     }
 
-                    var chart_div = document.getElementById('linechart_material');
+                    var chart_div = document.getElementById('linechart');
                     var chart = new google.visualization.LineChart(chart_div);
-
-                    document.getElementById('png')
 
                     // Wait for the chart to finish drawing before calling the getImageURI() method.
                     google.visualization.events.addListener(chart, 'ready', function () {
-                        document.getElementById('png').innerHTML =
-                            '<a href="'+chart.getImageURI()+'">printable version</a>';
+                        $('#png').innerHTML = '<a href="'+chart.getImageURI()+'">printable version</a>';
                     });
                     chart.draw(data, options);
                 };
@@ -160,7 +157,7 @@
             </script>
         </div>
         <div class="row">
-            <div id="linechart_material"></div>
+            <div id="linechart"></div>
             <div id="png"></div>
         </div>
     </div>
