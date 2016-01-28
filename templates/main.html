@@ -90,11 +90,12 @@
                                 d.quotes[i][3], d.quotes[i][4]]);
                     }
                     var options = {
-                        title: $("#currency").val()+' versus TWD',
-                        width: $(window).width(),
-                        height: 500,
-                        pointSize: 5,
-                        pointShape: { type: 'oval', sides: 4 }
+                        'title': $("#currency").val()+' versus TWD',
+                        'width': $(window).width(),
+                        'height': 500,
+                        'pointSize': 5,
+                        'pointShape': {'type': 'oval', 'sides': 4},
+                        'chartArea': {'left': "5%"}
                     };
                     if (only_day) {
                         options['hAxis'] = { format:"MM/dd/yy" };
