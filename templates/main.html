@@ -70,7 +70,25 @@
             <input type="text" name="daterange" id="daterange" />
             <button type="button" class="btn btn-default" id="bt_quote">Quote!</button>
             <script type="text/javascript">
+                {% if query %}
+                function qry() {
+                    try {
+                        $("#currency").val("{{query.currency}}");
+                        console.log("{{query.start_date}}");
+                        console.log("{{query.end_date}}");
+                        var pattern = /(\d{4})(\d{2})(\d{2})/;
+                        start_date = moment(Date.parse("{{query.start_date}}".replace(pattern, '$1/$2/$3')));
+                        end_date = moment(Date.parse("{{query.end_date}}".replace(pattern, '$1/$2/$3')));
+                        getData(start_date, end_date, null);
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }
+                google.load("visualization", "1.1", {packages:["corechart"], callback: qry});
+                {% else %}
                 google.load("visualization", "1.1", {packages:["corechart"]});
+                {% endif %}
+
                 var quote_data = null;
 
                 function drawChart(d, sameday) {
@@ -158,6 +176,7 @@
                     }
                 }
                 window.onresize = resize;
+
             </script>
         </div>
         <div class="row">

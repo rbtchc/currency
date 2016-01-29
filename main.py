@@ -48,11 +48,18 @@ def landing_page():
     u = users.get_current_user()
     user_record = None
     logging.info("user = %s" % u)
+    start_date = request.args.get('start', None)
+    end_date = request.args.get('end', None)
+    currency = request.args.get('currency', None)
+    qry = None
+    if start_date and end_date and currency:
+        logging.info('%s - %s in %s' % (start_date, end_date, currency))
+        qry={'start_date': start_date, 'end_date': end_date, 'currency': currency}
     if u:
         user_record = get_user(u.user_id())
         if not user_record:
             user_record = create_user(u)
-    return render_template('main.html', user=user_record, url=url)
+    return render_template('main.html', user=user_record, url=url, query=qry)
 
 def daterange(start_date, end_date):
     for n in range(int ((end_date - start_date).days)):
