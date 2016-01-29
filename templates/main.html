@@ -28,7 +28,7 @@
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
 
     <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
-    <script type="text/javascript" src="//www.google.com/jsapi"></script>
+    <script type="text/javascript" src="//www.google.com/jsapi" async></script>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
@@ -72,7 +72,8 @@
             <script type="text/javascript">
                 google.load("visualization", "1.1", {packages:["corechart"]});
                 var quote_data = null;
-                function drawChart(d, only_day) {
+
+                function drawChart(d, sameday) {
                     var data = new google.visualization.DataTable();
                     data.addColumn('datetime',  'Time');
                     data.addColumn('number',    '現金買入');
@@ -91,7 +92,7 @@
                         'pointShape': {'type': 'oval', 'sides': 4},
                         'chartArea': {'left': 40}
                     };
-                    if (only_day) {
+                    if (sameday) {
                         options['hAxis'] = { format:"MM/dd/yy" };
                     }
 
@@ -112,9 +113,9 @@
                         start_date: start.format("YYYYMMDD"),
                         end_date:   end.format("YYYYMMDD"),
                     }, function(data) {
-                        only_day = $("#start_date").val() != $("#end_date").val()
+                        sameday = $("#start_date").val() != $("#end_date").val()
                         quote_data = data; // assigned to global varaible for redraw when resizing
-                        drawChart(data, only_day);
+                        drawChart(data, sameday);
                     });
                     return false;
                 };
@@ -139,7 +140,7 @@
                     $('input[name="multiday"]').change(function () {
                         if (this.checked) {
                             opts.singleDatePicker = false;
-                            opts.startDate = moment().subtract(1,'days').startOf('day');
+                            opts.startDate = moment().subtract(5,'days').startOf('day');
                             opts.endDate = moment().startOf('day');
                         } else {
                             opts.singleDatePicker = true;
@@ -152,11 +153,10 @@
                 });
 
                 function resize() {
-                    if (quote_data != null && only_day != null) {
-                        drawChart(quote_data, only_day);
+                    if (quote_data != null && sameday != null) {
+                        drawChart(quote_data, sameday);
                     }
                 }
-                window.onload = resize();
                 window.onresize = resize;
             </script>
         </div>
