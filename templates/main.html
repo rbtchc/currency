@@ -27,7 +27,7 @@
     <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
 
-    <script type="text/javascript" src="//www.google.com/jsapi" async></script>
+    <script type="text/javascript" src="//www.google.com/jsapi"></script>
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.5/clipboard.min.js" async></script>
 </head>
@@ -74,8 +74,6 @@
                 function qry() {
                     try {
                         $("#currency").val("{{query.currency}}");
-                        console.log("{{query.start_date}}");
-                        console.log("{{query.end_date}}");
                         var pattern = /(\d{4})(\d{2})(\d{2})/;
                         start_date = moment(Date.parse("{{query.start_date}}".replace(pattern, '$1/$2/$3')));
                         end_date = moment(Date.parse("{{query.end_date}}".replace(pattern, '$1/$2/$3')));
@@ -162,7 +160,7 @@
                         "startDate": moment().startOf('day'),
                         "singleDatePicker": true
                     };
-                    $('input[name="multiday"]').change(function () {
+                    $('#multiday').change(function(){
                         if (this.checked) {
                             opts.singleDatePicker = false;
                             opts.startDate = moment().subtract(5,'days').startOf('day');
@@ -171,10 +169,10 @@
                             opts.singleDatePicker = true;
                             opts.startDate = moment().startOf('day');
                         }
-                        $('input[name="daterange"]').daterangepicker(opts, getData);
+                        $('#daterange').daterangepicker(opts, getData);
 
                     });
-                    $('input[name="daterange"]').daterangepicker(opts, getData);
+                    $('#daterange').daterangepicker(opts, getData);
                 });
 
                 function resize() {
