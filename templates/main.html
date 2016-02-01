@@ -29,7 +29,7 @@
 
     <script type="text/javascript" src="//www.google.com/jsapi" async></script>
     <link rel="stylesheet" href="/static/css/style.css">
-    <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.5/clipboard.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.5/clipboard.min.js" async></script>
 </head>
 <body>
     <div class="container">
@@ -136,7 +136,10 @@
                         $("#btn_copy").attr("data-clipboard-text",
                             window.location.origin+'/?start='+start.format("YYYYMMDD")
                             +'&end='+end.format("YYYYMMDD")+'&currency='+$("#currency").val());
-                        $("#link_block").show();
+                        if ($("#link_block").is(":visible") == false) {
+                            var clipboard = new Clipboard('#btn_copy');
+                            $("#link_block").show();
+                        }
                         drawChart(data, sameday);
                     });
                     return false;
@@ -194,7 +197,6 @@
                 <div id="png"></div>
                 <!-- Instantiate clipboard by passing a string selector -->
                 <script>
-                    var clipboard = new Clipboard('#btn_copy');
                     $("#link_block").hide();
                 </script>
             </div>
