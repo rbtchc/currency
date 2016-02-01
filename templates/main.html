@@ -27,9 +27,9 @@
     <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
 
-    <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
     <script type="text/javascript" src="//www.google.com/jsapi" async></script>
     <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.5/clipboard.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -126,13 +126,17 @@
 
                 function getData(start, end, label) {
                     //console.log("start - end: " + start + ' - ' + end);
-                    $.getJSON($SCRIPT_ROOT + '/rate/v1.0/BOT', {
+                    $.getJSON('/rate/v1.0/BOT', {
                         currency:   $( "#currency" ).val(),
                         start_date: start.format("YYYYMMDD"),
                         end_date:   end.format("YYYYMMDD"),
                     }, function(data) {
-                        sameday = $("#start_date").val() != $("#end_date").val()
+                        sameday = $("#start_date").val() != $("#end_date").val();
                         quote_data = data; // assigned to global varaible for redraw when resizing
+                        $("#btn_copy").attr("data-clipboard-text",
+                            window.location.origin+'/?start='+start.format("YYYYMMDD")
+                            +'&end='+end.format("YYYYMMDD")+'&currency='+$("#currency").val());
+                        $("#link_block").show();
                         drawChart(data, sameday);
                     });
                     return false;
@@ -181,7 +185,19 @@
         </div>
         <div class="row">
             <div id="linechart"></div>
-            <div id="png"></div>
+            <div id="link_block">
+                <!-- Trigger -->
+                <span>
+                <button class="btn btn-default" id="btn_copy" title="Copied!" data-clipboard-text="NA">
+                    Copy link of quote
+                </button>
+                <div id="png"></div>
+                <!-- Instantiate clipboard by passing a string selector -->
+                <script>
+                    var clipboard = new Clipboard('#btn_copy');
+                    $("#link_block").hide();
+                </script>
+            </div>
         </div>
     </div>
 </body>
