@@ -10,7 +10,6 @@ from google.appengine.ext import ndb
 from models import XchgRecord, User
 from helper import GenericBank
 from twbank import TWBank
-from webapp2_extras import jinja2
 
 # Import the Flask Framework
 from flask import Flask, request, jsonify
